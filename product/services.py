@@ -39,31 +39,37 @@ def get_products_with_average_ratings() -> list:
     return result
 
 
-def get_product_reviews(product_id:int) -> list:
+def get_total_product_review(product_id:int) -> dict:
     reviews = Review.objects.filter(product=product_id)
 
-    res = []
+    res = {
+        "total_rating": 0,
+        "price_rating": 0,
+        "quality_rating": 0,
+        "functionality_rating": 0,
+        "design_rating": 0,
+        "brand_rating": 0,
+        "ergonomics_rating": 0,
+    }
+    n = 0
 
     for review in reviews:
+        n +=1 
         ratings = [
             review.price_rating,
             review.quality_rating,
             review.functionality_rating,
             review.design_rating,
             review.brand_rating,
-            review.ergonomics_rating,
+            review.ergonomics_rating
         ]
-
-        rating_sum = sum(ratings)
-
-        res.append({
-            "total_rating": rating_sum / 6,
-            "price_rating":review.price_rating,
-            "quality_rating": review.quality_rating,
-            "functionality_rating": review.functionality_rating,
-            "design_rating": review.design_rating,
-            "brand_rating": review.brand_rating,
-            "ergonomics_rating": review.ergonomics_rating
-        })
+        
+        res["total_rating"] += round(sum(ratings) / (len(reviews) * 6), 2)
+        res["price_rating"] += round(review.price_rating / len(reviews), 2)
+        res["quality_rating"] += round(review.quality_rating / len(reviews), 2)
+        res["functionality_rating"] += round(review.functionality_rating / len(reviews), 2)
+        res["design_rating"] += round(review.design_rating / len(reviews), 2)
+        res["brand_rating"] += round(review.brand_rating / len(reviews), 2)
+        res["ergonomics_rating"] += round(review.ergonomics_rating / len(reviews), 2)
 
     return res

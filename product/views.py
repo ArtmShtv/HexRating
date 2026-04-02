@@ -8,7 +8,7 @@ from django.shortcuts import get_object_or_404
 
 from product.models import Product, Review
 
-from .services import get_products_with_average_ratings, get_product_reviews
+from .services import get_products_with_average_ratings, get_total_product_review
 
 
 class ProductsListAPI(APIView):
@@ -36,7 +36,7 @@ class ProductsRetrieveAPI(APIView):
 
     def get(self, request, product_id):
         product = get_object_or_404(Product, id=product_id)
-
+ 
         serializers = self.ProductOutputSerializer(product)
 
         return Response({
@@ -80,6 +80,23 @@ class ProductDeleteAPI(APIView):
 
 class ProductReviewsListAPI(APIView):
     class ProductReviewsOutputSerializer(serializers.Serializer):
+        price_rating = serializers.IntegerField()
+        quality_rating = serializers.IntegerField()
+        functionality_rating = serializers.IntegerField()
+        design_rating = serializers.IntegerField()
+        brand_rating = serializers.IntegerField()
+        ergonomics_rating = serializers.IntegerField()
+
+    def get(self, request, product_id):
+        reviews = Review.objects.filter(product=product_id)
+
+        serializer = self.ProductReviewsOutputSerializer(reviews, many=True)
+
+        return Response({"reviews":serializer.data}, status=status.HTTP_200_OK)
+    
+
+class ProductTotalReviewAPI(APIView):
+    class ProductReviewsOutputSerializer(serializers.Serializer):
         total_rating = serializers.DecimalField(max_digits=3, decimal_places=2)
         price_rating = serializers.IntegerField()
         quality_rating = serializers.IntegerField()
@@ -89,11 +106,11 @@ class ProductReviewsListAPI(APIView):
         ergonomics_rating = serializers.IntegerField()
 
     def get(self, request, product_id):
-        reviews = get_product_reviews(product_id)
+        reviews = get_total_product_review(product_id)
 
-        serializer = self.ProductReviewsOutputSerializer(reviews, many=True)
+        serializer = self.ProductReviewsOutputSerializer(reviews)
 
-        return Response({"reviews":serializer.data}, status=status.HTTP_200_OK)
+        return Response({"total_rating":serializer.data}, status=status.HTTP_200_OK)
 
 
 class ReviewCreateAPI(APIView):

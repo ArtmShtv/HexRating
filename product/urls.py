@@ -5,7 +5,8 @@ from .views import (ProductsListAPI,
                     ReviewCreateAPI, 
                     ProductDeleteAPI, 
                     ReviewDeleteAPI,
-                    ProductReviewsListAPI
+                    ProductReviewsListAPI,
+                    ProductTotalReviewAPI,
                     )
 
 urlpatterns = [
@@ -14,7 +15,8 @@ urlpatterns = [
     path("create/", ProductCreateAPI.as_view(), name="product-create"),
     path("delete/<int:product_id>/", ProductDeleteAPI.as_view(), name="product-delete"),
 
-    path("review/<int:product_id>/", ProductReviewsListAPI.as_view(), name="review-create"),
+    path("review/<int:product_id>/", ProductReviewsListAPI.as_view(), name="product-reviews-list"),
+    path("review/<int:product_id>/total/", ProductTotalReviewAPI.as_view(), name="product-total-rating"),
     path("review/create/", ReviewCreateAPI.as_view(), name="review-create"),
     path("review/delete/<int:review_id>/", ReviewDeleteAPI.as_view(), name="review-delete"),
 ]
