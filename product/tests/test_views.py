@@ -1,11 +1,9 @@
 import pytest
 
-from .conftest import api_client
 
 from django.urls import reverse
 from product.models import Product, Review
 
-from rest_framework import serializers
 
 
 @pytest.fixture
@@ -49,7 +47,7 @@ def products_data(db) -> list[Product]:
         ergonomics_rating = 4
     )
 
-    return first_product, second_product, third_product
+    return first_product, second_product, third_product, review1, review2, review3
 
 
 @pytest.fixture
@@ -86,7 +84,7 @@ def reviews_data(db) -> list[Review]:
         ergonomics_rating = 4
     )
 
-    return review1, review2, review3
+    return review1, review2, review3, third_product
 
 
 def test_product_retrieve(api_client, product_data):
@@ -247,7 +245,6 @@ def test_create_product(api_client):
         "name": "Some_product", 
         "price": 100
     }
-    headers = {"Content-Type": "application/json"}
     response = api_client.post(url, payload, format="json")
 
     assert response.status_code == 201
@@ -293,7 +290,7 @@ def test_create_review(api_client, product_data):
 
     response = api_client.post(url, payload, format="json")
 
-    assert Product.objects.filter(id=product_data.id).exists() == True
+    assert Product.objects.filter(id=product_data.id).exists()
     assert response.status_code == 201
 
 
@@ -312,7 +309,7 @@ def test_create_review_for_non_existing_product(api_client):
 
     response = api_client.post(url, payload, format="json")
 
-    assert Product.objects.filter(id=999).exists() == False
+    assert not Product.objects.filter(id=999).exists()
     assert response.status_code == 400
 
 
@@ -321,7 +318,7 @@ def test_delete_product(api_client, product_data):
     response = api_client.delete(url)
 
     assert response.status_code == 200
-    assert Product.objects.filter(id=1).exists() == False
+    assert not Product.objects.filter(id=1).exists()
 
 
 def test_delete_non_existing_product(api_client, product_data):
@@ -336,7 +333,7 @@ def test_delete_review(api_client, reviews_data):
     response = api_client.delete(url)
 
     assert response.status_code == 200
-    assert Review.objects.filter(id=1).exists() == False
+    assert not Review.objects.filter(id=1).exists()
 
 
 def test_delete_non_existing_review(api_client, reviews_data):

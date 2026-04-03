@@ -6,7 +6,7 @@ class ProductAdmin(admin.ModelAdmin):
     list_display = ("name", "price") 
 
 @admin.register(Review)
-class ProductAdmin(admin.ModelAdmin):
+class ReviewAdmin(admin.ModelAdmin):
     list_display = [
             "product",
             "price_rating",

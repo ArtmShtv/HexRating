@@ -1,6 +1,5 @@
 from .models import Product, Review
 
-from collections import defaultdict
 
 
 def get_products_with_average_ratings() -> list:
