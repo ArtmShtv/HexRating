@@ -33,7 +33,6 @@ class ProductsRetrieveAPI(APIView):
         name = serializers.CharField()
         price = serializers.DecimalField(max_digits=9, decimal_places=2)
 
-
     def get(self, request, product_id):
         product = get_object_or_404(Product, id=product_id)
  
