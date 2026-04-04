@@ -4,6 +4,7 @@ from rest_framework import status
 from rest_framework import serializers
 
 from django.shortcuts import get_object_or_404
+from django.core.cache import cache
 
 from product.models import Product, Review
 
@@ -17,7 +18,10 @@ class ProductsListAPI(APIView):
         overall_rating = serializers.DecimalField(max_digits=3, decimal_places=2)
 
     def get(self, request):
-        products = get_products_with_average_ratings()
+        products = cache.get("products")
+        if not products:
+            products = get_products_with_average_ratings()
+            cache.set("products", products, 300)
 
         serializer = self.ProductsOutputSerializer(products, many=True)
 
